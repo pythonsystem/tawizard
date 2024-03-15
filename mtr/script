@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [[ $1 = '' ]]
+then
+  echo '> package-setup'
+  echo '> package-build'
+  echo '> package-publish'
+  echo '> package-execute'
+elif [[ $1 = 'package-setup' ]]
+then
+  PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring pip install --no-warn-script-location build
+  PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring pip install --no-warn-script-location twine
+elif [[ $1 = 'package-build' ]]
+then
+  origin=`pwd`
+  cd prj
+  rm -rf dist
+  PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring python -m build
+  cd $origin
+elif [[ $1 = 'package-publish' ]]
+then
+  origin=`pwd`
+  cd prj
+  PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring python -m twine upload dist/*
+  cd $origin
+elif [[ $1 = 'package-execute' ]]
+then
+  /bin/ls -lA prj/dist/*
+fi
